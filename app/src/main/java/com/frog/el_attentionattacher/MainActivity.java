@@ -1,11 +1,15 @@
 package com.frog.el_attentionattacher;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -14,6 +18,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,71 +36,28 @@ import okhttp3.Response;
 import utils.HttpUtil;
 import utils.ToastUtil;
 
-public class MainActivity extends AppCompatActivity {
-
-    private DrawerLayout mDrawerLayout;
-    private TextView namesText;
-    private ImageView bingPicImg;
-
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //
-        namesText=(TextView)findViewById(R.id.names);
-        //标题栏
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBar actionBar = getSupportActionBar();
-        if (null != actionBar) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
-            //侧边栏导航键图标
-        }
-        //滑动侧边栏
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_change_userdata:
-                        mDrawerLayout.closeDrawers();
-                        break;
-                    case R.id.nav_schedule:
-                        mDrawerLayout.closeDrawers();
-                        break;
-                    case R.id.nav_settings:
-                        mDrawerLayout.closeDrawers();
-                        break;
-                    default:
-                        break;
-                }
-                return true;
-            }
-        });
-        //侧边栏按钮
-
+        //初始化
+        Button enterNewWorld=(Button)findViewById(R.id.enter_new_world);
+        enterNewWorld.setOnClickListener(MainActivity.this);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.toolbar_settings:
-                ToastUtil.showToast(MainActivity.this, "Settings.", Toast.LENGTH_SHORT);
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.enter_new_world:
+                Intent intent = new Intent(
+                        MainActivity.this, AttentionAttacherActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;
         }
-        return true;
     }
-    //菜单栏按钮
-
-
 
     private Bitmap getImage(String srcPath) {
         BitmapFactory.Options newOpts = new BitmapFactory.Options();
