@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_change_userdata"
+            android:icon="@drawable/nav_personal_info"
+            android:title="个人信息"/>
+        <item
+            android:id="@+id/nav_schedule"
+            android:icon="@drawable/nav_schedule"
+            android:title="日程管理"/>
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/nav_settings"
+            android:title="更多设置"/>
+    </group>
+</menu>
