@@ -36,6 +36,11 @@ import okhttp3.Response;
 import utils.HttpUtil;
 import utils.ToastUtil;
 
+/**
+ * 进入界面
+ * Framed by Wen Sun
+ */
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //初始化
         Button enterNewWorld=(Button)findViewById(R.id.enter_new_world);
         enterNewWorld.setOnClickListener(MainActivity.this);
+        //进入界面按钮
     }
 
     @Override
@@ -53,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(
                         MainActivity.this, AttentionAttacherActivity.class);
                 startActivity(intent);
+                this.finish();
+                //进入界面不需要出现两次，直接finish
                 break;
             default:
                 break;
