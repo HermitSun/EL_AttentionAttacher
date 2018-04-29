@@ -24,40 +24,22 @@ import utils.ActivityCollector;
 
 public class GuideActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private SharedPreferences preferences;
-    private Editor editor;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_guide);
-        preferences = getSharedPreferences("guideActivity", MODE_PRIVATE);
         //初始化
         Button register = (Button) findViewById(R.id.register);
         register.setOnClickListener(GuideActivity.this);
         //进入界面按钮
-        //判断是否首次登录
-        if (preferences.getBoolean("firstStart", true)) {
-            editor = preferences.edit();
-            //设置为false，不再显示引导页
-            editor.putBoolean("firstStart", false);
-            editor.apply();
-        } else {
-            Intent intent = new Intent(this, Welcome.class);
-            startActivity(intent);
-            this.finish();
-        }
-        //不是首次登录，跳转到登录页
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.register:
-                Intent intent = new Intent(
-                        GuideActivity.this, AttentionAttacherActivity.class);
+                Intent intent = new Intent(this, AttentionAttacherActivity.class);
                 startActivity(intent);
                 this.finish();
                 //进入界面不需要出现两次，直接finish
