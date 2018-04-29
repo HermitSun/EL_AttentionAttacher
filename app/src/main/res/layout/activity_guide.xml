@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                android:text="欢迎！"
+                android:text="欢迎"
                 android:textColor="#fff"
                 android:textSize="60sp" />
 
@@ -43,7 +43,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:gravity="center_horizontal"
-                android:text="A Tricky new world is waiting for you."
+                android:text="A Tricky new world is waiting for you!"
                 android:textColor="#fff"
                 android:textSize="20sp" />
 
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:textColorHint="#fff"
                 android:textColor="#fff"
-                android:hint="账号:"
+                android:hint="账号："
                 android:background="@drawable/edittext"
                 android:paddingLeft="15sp"
                 android:paddingBottom="15sp"
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:textColorHint="#fff"
                 android:textColor="#fff"
-                android:hint="密码:"
+                android:hint="密码："
                 android:inputType="textPassword"
                 android:background="@drawable/edittext"
                 android:lines="1"
@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:textColorHint="#fff"
                 android:textColor="#fff"
-                android:hint="姓名:"
+                android:hint="姓名："
                 android:background="@drawable/edittext"
                 android:lines="1"
                 android:singleLine="true"
@@ -115,10 +115,9 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/start_attention"
-                android:text="启动"
+                android:text="Start!"
                 android:textColor="#fff"
                 android:textSize="25sp" />
         </LinearLayout>
     </ScrollView>
 </FrameLayout>
-

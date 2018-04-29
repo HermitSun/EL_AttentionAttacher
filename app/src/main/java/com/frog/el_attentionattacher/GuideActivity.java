@@ -72,6 +72,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
                 String usernameIn=username.getText().toString();
                 LitePal.getDatabase();
                 PersonalInfoData data=new PersonalInfoData();
+                data.setId(1);
                 data.setAccount(accountIn);
                 data.setPassword(passwordIn);
                 data.setUsername(usernameIn);
