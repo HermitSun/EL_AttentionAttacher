@@ -2,62 +2,59 @@ package com.frog.el_attentionattacher;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.os.Build;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
-import utils.HttpUtil;
-import utils.ToastUtil;
 
 /**
- * 进入界面
+ * 引导界面
  * Framed by Wen Sun
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class GuideActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private SharedPreferences preferences;
+    private Editor editor;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_guide);
+        preferences = getSharedPreferences("guideActivity", MODE_PRIVATE);
         //初始化
-        Button enterNewWorld=(Button)findViewById(R.id.enter_new_world);
-        enterNewWorld.setOnClickListener(MainActivity.this);
+        Button register = (Button) findViewById(R.id.register);
+        register.setOnClickListener(GuideActivity.this);
         //进入界面按钮
+        //判断是否首次登录
+        if (preferences.getBoolean("firstStart", true)) {
+            editor = preferences.edit();
+            //设置为false，不再显示引导页
+            editor.putBoolean("firstStart", false);
+            editor.apply();
+        } else {
+            Intent intent = new Intent(this, Welcome.class);
+            startActivity(intent);
+            this.finish();
+        }
+        //不是首次登录，跳转到登录页
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.enter_new_world:
+            case R.id.register:
                 Intent intent = new Intent(
-                        MainActivity.this, AttentionAttacherActivity.class);
+                        GuideActivity.this, AttentionAttacherActivity.class);
                 startActivity(intent);
                 this.finish();
                 //进入界面不需要出现两次，直接finish
