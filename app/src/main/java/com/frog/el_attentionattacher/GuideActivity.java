@@ -17,6 +17,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.frog.el_attentionattacher.db.PersonalInfoData;
+
+import org.litepal.LitePal;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,8 +51,13 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         }
         setContentView(R.layout.activity_guide);
         //将任务栏加入布局
-        guideBackground=(ImageView)findViewById(R.id.guide_background);
+        guideBackground = (ImageView) findViewById(R.id.guide_background);
         Glide.with(this).load(R.drawable.guide_background).into(guideBackground);
+        //背景图
+        account = (EditText) findViewById(R.id.account);
+        password = (EditText) findViewById(R.id.password);
+        username = (EditText) findViewById(R.id.username);
+        //实例化文本框
         Button register = (Button) findViewById(R.id.register);
         register.setOnClickListener(GuideActivity.this);
         //注册并开始使用
@@ -59,6 +67,16 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.register:
+                String accountIn=account.getText().toString();
+                String passwordIn=password.getText().toString();
+                String usernameIn=username.getText().toString();
+                LitePal.getDatabase();
+                PersonalInfoData data=new PersonalInfoData();
+                data.setAccount(accountIn);
+                data.setPassword(passwordIn);
+                data.setUsername(usernameIn);
+                data.save();
+                //个人信息写入数据库
                 Intent intent = new Intent(this, AttentionAttacherActivity.class);
                 startActivity(intent);
                 this.finish();
