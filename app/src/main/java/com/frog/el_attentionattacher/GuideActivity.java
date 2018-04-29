@@ -5,12 +5,18 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,15 +30,29 @@ import utils.ActivityCollector;
 
 public class GuideActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private ImageView guideBackground;
+    private EditText account;
+    private EditText password;
+    private EditText username;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
-        setContentView(R.layout.activity_guide);
         //初始化
+        if (Build.VERSION.SDK_INT >= 21) {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
+        setContentView(R.layout.activity_guide);
+        //将任务栏加入布局
+        guideBackground=(ImageView)findViewById(R.id.guide_background);
+        Glide.with(this).load(R.drawable.guide_background).into(guideBackground);
         Button register = (Button) findViewById(R.id.register);
         register.setOnClickListener(GuideActivity.this);
-        //进入界面按钮
+        //注册并开始使用
     }
 
     @Override
