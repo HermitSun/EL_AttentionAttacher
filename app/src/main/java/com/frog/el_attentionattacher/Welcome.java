@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import utils.ActivityCollector;
+
 /**
  * 进入界面
  * Framed by Wen Sun
@@ -16,6 +18,7 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_welcome);
         //初始化
         Button enterNewWorld = (Button) findViewById(R.id.enter_new_world);
@@ -35,5 +38,11 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
     }
 }

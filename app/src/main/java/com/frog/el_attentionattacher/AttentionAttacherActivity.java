@@ -1,5 +1,6 @@
 package com.frog.el_attentionattacher;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -27,6 +29,8 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import com.frog.el_attentionattacher.service.AutoUpdateService;
+
+import utils.ActivityCollector;
 import utils.HttpUtil;
 import utils.ToastUtil;
 
@@ -44,6 +48,7 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCollector.addActivity(this);
         //初始化
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
@@ -98,6 +103,8 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
                 switch (item.getItemId()) {
                     case R.id.nav_change_userdata:
                         mDrawerLayout.closeDrawers();
+                        Intent intent=new Intent(AttentionAttacherActivity.this,PersonalInfo.class);
+                        startActivity(intent);
                         break;
                     case R.id.nav_schedule:
                         mDrawerLayout.closeDrawers();
@@ -109,6 +116,29 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
                         break;
                     case R.id.nav_settings:
                         mDrawerLayout.closeDrawers();
+                        break;
+                    case R.id.nav_delete:
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(AttentionAttacherActivity.this);
+                        dialog.setTitle("彻底退出");
+                        dialog.setMessage("不再考虑考虑？");
+                        dialog.setCancelable(false);
+                        dialog.setPositiveButton("退出", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ToastUtil.showToast(AttentionAttacherActivity.this,
+                                        "很惭愧，就做了一点微小的工作", Toast.LENGTH_SHORT);
+                                ActivityCollector.finishAll();
+                            }
+                        });
+                        dialog.setNegativeButton("算了", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ToastUtil.showToast(AttentionAttacherActivity.this,
+                                        "你们哪，不要整天想着搞一个大新闻", Toast.LENGTH_SHORT);
+                                mDrawerLayout.closeDrawers();
+                            }
+                        });
+                        dialog.show();
                         break;
                     default:
                         break;
@@ -165,8 +195,8 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
             }
         });
     }
-
     //必应每日一图的具体实现
+
     private long mExitTime = 0;
 
     //计时器，虽然放在这里很丑，但放在实例区明显不合适，就凑合一下（可理解）
@@ -177,7 +207,6 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
                 ToastUtil.showToast(this, "再按一次退出程序", Toast.LENGTH_SHORT);
                 mExitTime = System.currentTimeMillis();
             } else {
-                ToastUtil.showToast(this, "很惭愧，就做了一点微小的工作", Toast.LENGTH_SHORT);
                 Intent home = new Intent(Intent.ACTION_MAIN);
                 home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 home.addCategory(Intent.CATEGORY_HOME);
@@ -188,4 +217,10 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         return super.onKeyDown(keyCode, event);
     }
     //实现再按一次退出，退出时说骚话并以home形式存储
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
+    }
 }

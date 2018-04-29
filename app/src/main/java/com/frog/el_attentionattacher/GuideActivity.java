@@ -15,6 +15,8 @@ import android.widget.Button;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import utils.ActivityCollector;
+
 /**
  * 引导界面
  * Framed by Wen Sun
@@ -28,6 +30,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCollector.addActivity(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_guide);
         preferences = getSharedPreferences("guideActivity", MODE_PRIVATE);
@@ -62,6 +65,12 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
     }
 
     private Bitmap getImage(String srcPath) {
@@ -112,5 +121,4 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
         Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);
         return bitmap;
     }
-
 }
