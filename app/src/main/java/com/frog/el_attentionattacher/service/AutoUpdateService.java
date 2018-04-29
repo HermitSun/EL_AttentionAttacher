@@ -1,4 +1,4 @@
-package service;
+package com.frog.el_attentionattacher.service;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -8,10 +8,6 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.frog.el_attentionattacher.AttentionAttacherActivity;
 
 import java.io.IOException;
 
@@ -19,7 +15,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import utils.HttpUtil;
-import utils.ToastUtil;
 
 public class AutoUpdateService extends Service {
     public AutoUpdateService() {

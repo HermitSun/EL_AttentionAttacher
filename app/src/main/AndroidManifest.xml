@@ -23,9 +23,11 @@
         <activity android:name=".Almanac" />
 
         <service
-            android:name="service.AutoUpdateService"
+            android:name=".service.AutoUpdateService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".PersonalInfo"></activity>
     </application>
 
 </manifest>
