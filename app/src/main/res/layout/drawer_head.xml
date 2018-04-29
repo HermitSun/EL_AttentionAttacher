@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="180dp"
+    android:layout_height="170dp"
     android:padding="10dp"
     android:background="?attr/colorPrimary">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/nav_icon_image"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
         android:src="@drawable/nav_icon"
         android:layout_alignParentLeft="true"/>
 
@@ -17,36 +19,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="15dp"
         android:layout_gravity="right"
-        android:text="Wen Sun"
         android:textColor="#fff"
         android:textSize="36sp" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/user_signature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/user_name"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical">
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="right"
+        android:text="总感觉差点什么……"
+        android:textColor="#fff"
+        android:textSize="20sp"/>
 
-        <TextView
-            android:id="@+id/user_gender"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:text="Male"
-            android:textColor="#fff"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/user_mail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:text="syl1887415157@126.com"
-            android:textColor="#fff"
-            android:textSize="16sp" />
-    </LinearLayout>
 </RelativeLayout>

@@ -14,21 +14,28 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+
+import com.frog.el_attentionattacher.db.PersonalInfoData;
 import com.frog.el_attentionattacher.service.AutoUpdateService;
+
+import org.litepal.crud.DataSupport;
 
 import utils.ActivityCollector;
 import utils.HttpUtil;
@@ -41,15 +48,20 @@ import utils.ToastUtil;
 
 public class AttentionAttacherActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private int id;
     private DrawerLayout mDrawerLayout;
     private ImageView bingPicImg;
     public SwipeRefreshLayout swipeRefreshLayout;
+    private NavigationView navigationView;
+    private TextView userName;
+    private ImageView userIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
         //初始化
+
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
             decorView.setSystemUiVisibility(
@@ -58,9 +70,11 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         }
         setContentView(R.layout.activity_attention_attacher);
         //将任务栏加入布局
+
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         //下拉刷新
+
         Button startAttachAttention = (Button) findViewById(R.id.start_attach_attention);
         startAttachAttention.setOnClickListener(AttentionAttacherActivity.this);
         //开始专注按钮
@@ -96,6 +110,19 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         });
         //滑动侧边栏
 
+        navigationView=(NavigationView)findViewById(R.id.nav_view);
+        View headView=navigationView.getHeaderView(0);
+        Intent rawIntent = getIntent();
+        Bundle bundle = rawIntent.getExtras();
+        id = bundle.getInt("user_id");
+        //获得用户ID
+        userName = (TextView) headView.findViewById(R.id.user_name);
+        List<PersonalInfoData> list=DataSupport.findAll(PersonalInfoData.class);
+        userName.setText(list.get(id-1).getUsername());
+        userIcon=(ImageView)headView.findViewById(R.id.nav_icon_image);
+        userIcon.setImageResource(R.drawable.ic_launcher_background);
+        //初始化个人信息
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -103,7 +130,8 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
                 switch (item.getItemId()) {
                     case R.id.nav_change_userdata:
                         mDrawerLayout.closeDrawers();
-                        Intent intent=new Intent(AttentionAttacherActivity.this,PersonalInfo.class);
+                        Intent intent = new Intent(AttentionAttacherActivity.this, PersonalInfo.class);
+                        intent.putExtra("user_id", id);
                         startActivity(intent);
                         break;
                     case R.id.nav_schedule:

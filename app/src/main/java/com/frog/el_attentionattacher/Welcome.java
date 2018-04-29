@@ -27,7 +27,7 @@ import java.util.List;
 import utils.ActivityCollector;
 
 /**
- * 进入界面
+ * login界面
  * Framed by Wen Sun
  */
 
@@ -66,7 +66,7 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
             this.finish();
         } else {
             //不是首次登录
-            background=(ImageView)findViewById(R.id.welcome_background);
+            background = (ImageView) findViewById(R.id.welcome_background);
             Glide.with(Welcome.this).load(R.drawable.guide_background).into(background);
             //加载背景
             account = (EditText) findViewById(R.id.account);
@@ -83,10 +83,11 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
             case R.id.enter_new_world:
                 String accountGot = account.getText().toString();
                 String passwordGot = password.getText().toString();
+                int id = 0;
                 if (TextUtils.isEmpty(accountGot) || TextUtils.isEmpty(passwordGot)) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(Welcome.this);
                     dialog.setTitle("登录失败");
-                    dialog.setMessage("账号和密码不能为空！");
+                    dialog.setMessage("账号密码不能为空！");
                     dialog.setCancelable(false);
                     dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
@@ -105,6 +106,7 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
                         String passwordData = data.getPassword();
                         if (accountData.equals(accountGot) && passwordData.equals(passwordGot)) {
                             flag = true;
+                            id = data.getId();
                             break;
                         }
                     }
@@ -124,6 +126,7 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
                         break;
                     }
                     Intent intent = new Intent(this, AttentionAttacherActivity.class);
+                    intent.putExtra("user_id", id);
                     startActivity(intent);
                     this.finish();
                     //进入界面不需要出现两次，直接finish
