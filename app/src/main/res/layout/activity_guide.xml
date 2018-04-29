@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="25dp"
             android:background="#8000"
             android:fitsSystemWindows="true"
             android:orientation="vertical">
@@ -40,6 +40,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:gravity="center_horizontal"
                 android:text="A Tricky new world is waiting for you."
                 android:textColor="#fff"
@@ -49,93 +51,68 @@
                 android:layout_width="160dp"
                 android:layout_height="160dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="5dp"
                 android:src="@drawable/professor_ma" />
 
-            <TextView
+            <EditText
+                android:id="@+id/account"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:text="介需几步就可以开始使用："
+                android:textColorHint="#fff"
                 android:textColor="#fff"
-                android:textSize="20sp" />
+                android:hint="账号:"
+                android:background="@drawable/edittext"
+                android:paddingLeft="15sp"
+                android:paddingBottom="15sp"
+                android:paddingTop="15sp"
+                android:lines="1"
+                android:singleLine="true"
+                android:layout_marginRight="10sp"
+                android:layout_marginLeft="10sp"/>
 
-            <LinearLayout
+            <EditText
+                android:id="@+id/password"
+                android:layout_below="@id/account"
+                android:layout_marginTop="10sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:textColorHint="#fff"
+                android:textColor="#fff"
+                android:hint="密码:"
+                android:inputType="textPassword"
+                android:background="@drawable/edittext"
+                android:lines="1"
+                android:singleLine="true"
+                android:paddingLeft="15sp"
+                android:paddingBottom="15sp"
+                android:paddingTop="15sp"
+                android:layout_marginRight="10sp"
+                android:layout_marginLeft="10sp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:text="账号："
-                    android:textColor="#fff"
-                    android:textSize="30sp" />
-
-                <EditText
-                    android:id="@+id/account"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="请输入账号"
-                    android:maxLength="16"
-                    android:maxLines="1" />
-            </LinearLayout>
-
-            <LinearLayout
+            <EditText
+                android:id="@+id/username"
+                android:layout_below="@id/password"
+                android:layout_marginTop="10sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:text="密码："
-                    android:textColor="#fff"
-                    android:textSize="30sp" />
-
-                <EditText
-                    android:id="@+id/password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="请输入密码"
-                    android:inputType="textPassword"
-                    android:maxLength="18"
-                    android:maxLines="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:text="姓名："
-                    android:textColor="#fff"
-                    android:textSize="30sp" />
-
-                <EditText
-                    android:id="@+id/username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="如何称呼？"
-                    android:maxLength="20"
-                    android:maxLines="1" />
-            </LinearLayout>
+                android:textColorHint="#fff"
+                android:textColor="#fff"
+                android:hint="姓名:"
+                android:background="@drawable/edittext"
+                android:lines="1"
+                android:singleLine="true"
+                android:paddingLeft="15sp"
+                android:paddingBottom="15sp"
+                android:paddingTop="15sp"
+                android:layout_marginRight="10sp"
+                android:layout_marginLeft="10sp"/>
 
             <Button
                 android:id="@+id/register"
                 android:layout_width="120dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/start_attention"
                 android:text="启动"
@@ -144,3 +121,4 @@
         </LinearLayout>
     </ScrollView>
 </FrameLayout>
+
