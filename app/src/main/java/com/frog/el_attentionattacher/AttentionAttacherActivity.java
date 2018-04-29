@@ -31,6 +31,7 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import service.AutoUpdateService;
 import utils.HttpUtil;
 import utils.ToastUtil;
 
@@ -57,7 +58,7 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         }
         setContentView(R.layout.activity_attention_attacher);
         //将任务栏加入布局
-        swipeRefreshLayout=(SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         //下拉刷新
         Button startAttachAttention = (Button) findViewById(R.id.start_attach_attention);
@@ -81,10 +82,12 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
                 loadBingPic();
             }
         });
+        Intent loadPicIntent = new Intent(this, AutoUpdateService.class);
+        startService(loadPicIntent);
         //加载必应每日一图（可替换为本地服务器数据）
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        Button openDrawer=(Button)findViewById(R.id.nav_open_drawer);
+        Button openDrawer = (Button) findViewById(R.id.nav_open_drawer);
         openDrawer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,7 +147,7 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
                     @Override
                     public void run() {
                         ToastUtil.showToast(AttentionAttacherActivity.this,
-                                "再按一次退出程序", Toast.LENGTH_SHORT);
+                                "图片加载失败", Toast.LENGTH_SHORT);
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 });
@@ -167,6 +170,7 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
             }
         });
     }
+
     //必应每日一图的具体实现
     private long mExitTime = 0;
 
