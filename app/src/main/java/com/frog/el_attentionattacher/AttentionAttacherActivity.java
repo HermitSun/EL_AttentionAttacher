@@ -110,16 +110,16 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         });
         //滑动侧边栏
 
-        navigationView=(NavigationView)findViewById(R.id.nav_view);
-        View headView=navigationView.getHeaderView(0);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headView = navigationView.getHeaderView(0);
         Intent rawIntent = getIntent();
         Bundle bundle = rawIntent.getExtras();
         id = bundle.getInt("user_id");
         //获得用户ID
         userName = (TextView) headView.findViewById(R.id.user_name);
-        List<PersonalInfoData> list=DataSupport.findAll(PersonalInfoData.class);
-        userName.setText(list.get(id-1).getUsername());
-        userIcon=(ImageView)headView.findViewById(R.id.nav_icon_image);
+        List<PersonalInfoData> list = DataSupport.findAll(PersonalInfoData.class);
+        userName.setText(list.get(id - 1).getUsername());
+        userIcon = (ImageView) headView.findViewById(R.id.nav_icon_image);
         userIcon.setImageResource(R.drawable.ic_launcher_background);
         //初始化个人信息
 
@@ -144,6 +144,8 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
                         break;
                     case R.id.nav_settings:
                         mDrawerLayout.closeDrawers();
+                        Intent intent1 = new Intent(AttentionAttacherActivity.this, Settings.class);
+                        startActivity(intent1);
                         break;
                     case R.id.nav_delete:
                         AlertDialog.Builder dialog = new AlertDialog.Builder(AttentionAttacherActivity.this);
