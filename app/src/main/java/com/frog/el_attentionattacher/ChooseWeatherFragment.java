@@ -1,11 +1,13 @@
 package com.frog.el_attentionattacher;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,6 +108,13 @@ public class ChooseWeatherFragment extends Fragment {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
                     queryCounties();
+                } else if (currentLevel == LEVEL_COUNTY) {
+                    String weatherId = countyList.get(position).getWeatherId();
+                    Intent show = new Intent();
+                    show.putExtra("weather_id", weatherId);
+                    getActivity().setResult(Activity.RESULT_OK,show);
+                    Log.d("ELA","weather settings:"+weatherId);
+                    getActivity().finish();
                 }
             }
         });
@@ -116,14 +125,15 @@ public class ChooseWeatherFragment extends Fragment {
                     queryCities();
                 } else if (currentLevel == LEVEL_CITY) {
                     queryProvinces();
-                } else if(currentLevel==LEVEL_PROVINCE){
-                    Intent back=new Intent(getActivity(),Settings.class);
+                } else if (currentLevel == LEVEL_PROVINCE) {
+                    Intent back = new Intent(getActivity(), Settings.class);
                     startActivity(back);
                 }
             }
         });
         queryProvinces();
     }
+
     /**
      * 查询全国所有的省，优先从数据库查询，如果没有查询到再去服务器上查询。
      */

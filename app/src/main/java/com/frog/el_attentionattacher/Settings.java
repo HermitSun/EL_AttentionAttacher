@@ -29,7 +29,6 @@ public class Settings extends AppCompatActivity {
         //初始化
     }
 
-
     /**
      * 初始化Toolbar
      */

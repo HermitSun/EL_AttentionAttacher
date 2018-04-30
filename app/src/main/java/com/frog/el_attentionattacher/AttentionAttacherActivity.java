@@ -1,6 +1,5 @@
 package com.frog.el_attentionattacher;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,12 +34,15 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 import com.frog.el_attentionattacher.db.PersonalInfoData;
+import com.frog.el_attentionattacher.gson.Weather;
 import com.frog.el_attentionattacher.service.AutoUpdateService;
 
 import org.litepal.crud.DataSupport;
 
 import utils.ActivityCollector;
+import utils.AnalyzeWeatherUtil;
 import utils.HttpUtil;
+import utils.PrefUtils;
 import utils.ToastUtil;
 
 /**
@@ -50,17 +53,27 @@ import utils.ToastUtil;
 public class AttentionAttacherActivity extends AppCompatActivity implements View.OnClickListener {
 
     private int id;
+    private String mWeatherId;
     private DrawerLayout mDrawerLayout;
+    private ScrollView mainBody;
     private ImageView bingPicImg;
     public SwipeRefreshLayout swipeRefreshLayout;
     private NavigationView navigationView;
     private TextView userName;
     private ImageView userIcon;
 
+    private SharedPreferences prefs;
+    private SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
+        prefs= PreferenceManager.getDefaultSharedPreferences(this);
+        editor = PreferenceManager.getDefaultSharedPreferences(AttentionAttacherActivity.this).edit();
+        editor.putBoolean("change_background",false);
+        editor.apply();
+        //缓存数据
         //初始化
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -72,6 +85,7 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         setContentView(R.layout.activity_attention_attacher);
         //将任务栏加入布局
 
+        mainBody=(ScrollView)findViewById(R.id.main_body_layout);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         //下拉刷新
@@ -80,21 +94,31 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         startAttachAttention.setOnClickListener(AttentionAttacherActivity.this);
         //开始专注按钮
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
-                AttentionAttacherActivity.this);
-        //缓存数据
-
         bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
-        String bingPic = prefs.getString("bing_pic", null);
-        if (bingPic != null) {
-            Glide.with(AttentionAttacherActivity.this).load(bingPic).into(bingPicImg);
-        } else {
-            loadBingPic();
+        if(PrefUtils.isSaveBackgroundMode()&&prefs.getBoolean("change_background",true)){
+            changeBackgroundByWeather();
+        }else{
+            String bingPic = prefs.getString("bing_pic", null);
+            if (bingPic != null) {
+                Glide.with(AttentionAttacherActivity.this).load(bingPic).into(bingPicImg);
+            } else {
+                loadBingPic();
+            }
         }
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadBingPic();
+                if(PrefUtils.isSaveBackgroundMode()){
+                    Log.d("ELA","123");
+                    if(prefs.getBoolean("change_background",false)){
+                        editor.putBoolean("change_background",true);
+                        editor.apply();
+                    }
+                    changeBackgroundByWeather();
+                }else{
+                    loadBingPic();
+                }
             }
         });
         Intent loadPicIntent = new Intent(this, AutoUpdateService.class);
@@ -113,10 +137,10 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         View headView = navigationView.getHeaderView(0);
+
         Intent rawIntent = getIntent();
         Bundle bundle = rawIntent.getExtras();
         id = bundle.getInt("user_id");
-        //获得用户ID
         userName = (TextView) headView.findViewById(R.id.user_name);
         List<PersonalInfoData> list = DataSupport.findAll(PersonalInfoData.class);
         userName.setText(list.get(id - 1).getUsername());
@@ -146,7 +170,8 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
                     case R.id.nav_settings:
                         mDrawerLayout.closeDrawers();
                         Intent intent1 = new Intent(AttentionAttacherActivity.this, Settings.class);
-                        startActivity(intent1);
+                        startActivityForResult(intent1, 11);
+                        Log.d("ELA","settings");
                         break;
                     case R.id.nav_delete:
                         AlertDialog.Builder dialog = new AlertDialog.Builder(AttentionAttacherActivity.this);
@@ -212,8 +237,7 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String bingPic = response.body().string();
-                SharedPreferences.Editor editor = PreferenceManager.
-                        getDefaultSharedPreferences(AttentionAttacherActivity.this).edit();
+
                 editor.putString("bing_pic", bingPic);
                 editor.apply();
                 runOnUiThread(new Runnable() {
@@ -227,6 +251,102 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         });
     }
     //必应每日一图的具体实现
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 11:
+                if(resultCode==RESULT_OK){
+                    mWeatherId=data.getStringExtra("weather_id");
+                    Log.d("ELA","**:"+mWeatherId);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void changeBackgroundByWeather(){
+        Log.d("ELA","456");
+        String weatherString=prefs.getString("weather",null);
+        if(weatherString!=null){
+            Log.d("ELA","789");
+            Weather weather= AnalyzeWeatherUtil.handleWeatherResponse(weatherString);
+            showWeatherInfo(weather);
+        }else{
+            //mWeatherId = getIntent().getStringExtra("weather_id");
+            //解析intent得到天气信息
+            Log.d("ELA","enter");
+            mainBody.setVisibility(View.INVISIBLE);
+            Log.d("ELA","*:"+mWeatherId);
+            requestWeather(mWeatherId);
+        }
+    }
+    /**
+     * 根据天气id请求城市天气信息
+     */
+    public void requestWeather(final String weatherId) {
+        String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weatherId + "&key=41407a0da87447a6abcd65bb8f0c1794";
+        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseText = response.body().string();
+                final Weather weather = AnalyzeWeatherUtil.handleWeatherResponse(responseText);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (weather != null && "ok".equals(weather.status)) {
+                            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(
+                                    AttentionAttacherActivity.this).edit();
+                            editor.putString("weather", responseText);
+                            editor.apply();
+                            showWeatherInfo(weather);
+                        } else {
+                            ToastUtil.showToast(AttentionAttacherActivity.this,
+                                    "获取天气信息失败", Toast.LENGTH_SHORT);
+                        }
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.showToast(AttentionAttacherActivity.this,
+                                "获取天气信息失败", Toast.LENGTH_SHORT);
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+            }
+        });
+    }
+    /**
+     * 处理并展示Weather中的数据
+     */
+    private void showWeatherInfo(Weather weather) {
+        String cityName = weather.basic.cityName;
+        String updateTime = weather.basic.update.updateTime.split(" ")[1];
+        String degree = weather.now.temperature + "℃";
+        String weatherInfo = weather.now.more.info;
+        mainBody.setVisibility(View.VISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if("test"!=null){
+                    Glide.with(AttentionAttacherActivity.this).load(R.drawable.guide_background).into(bingPicImg);
+                }
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(intent);
+    }
+    //根据天气切换背景的具体实现
 
     private long mExitTime = 0;
 

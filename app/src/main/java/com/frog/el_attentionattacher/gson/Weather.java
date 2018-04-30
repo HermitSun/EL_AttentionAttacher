@@ -12,7 +12,4 @@ public class Weather {
 
     public Now now;
 
-    @SerializedName("daily_forecast")
-    public List<Forecast> forecastList;
-
 }

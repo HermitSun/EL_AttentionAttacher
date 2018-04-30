@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.util.Log;
 import android.widget.Toast;
 
 
 import utils.PrefUtils;
 import utils.ToastUtil;
+
+import static android.app.Activity.RESULT_OK;
 
 public class SettingsFragment extends PreferenceFragment {
     @Override
@@ -28,7 +31,10 @@ public class SettingsFragment extends PreferenceFragment {
                 //保存到SharedPreferences中
                 PrefUtils.setPreSaveBackgroundMode(checked);
                 if (PrefUtils.isSaveBackgroundMode()) {
-                    ToastUtil.showToast(getActivity(), "Weather", Toast.LENGTH_SHORT);
+                    ToastUtil.showToast(getActivity(), "已切换。设置完成后请刷新主界面。", Toast.LENGTH_SHORT);
+                    Intent setLocation = new Intent(getActivity(), ChooseWeatherActivity.class);
+                    startActivityForResult(setLocation, 21);
+                    Log.d("ELA","mode settings");
                 }
                 //启动时确认
                 return true;
@@ -68,6 +74,24 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
         //切换账号
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 21:
+                if(resultCode==RESULT_OK){
+                    String weather_id=data.getStringExtra("weather_id");
+                    Intent back=new Intent();
+                    back.putExtra("weather_id",weather_id);
+                    getActivity().setResult(RESULT_OK,back);
+                    Log.d("ELA","mode settings:"+weather_id);
+                    getActivity().finish();
+                }
+                break;
+            default:
+                break;
+        }
     }
 
 }
