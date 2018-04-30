@@ -16,6 +16,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.frog.el_attentionattacher.db.PersonalInfoData;
@@ -43,7 +44,16 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
-
+        //
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            int command = bundle.getInt("command");
+            if (command == 171250662) {
+                ActivityCollector.finishOthers(this);
+            }
+        }
+        //启动时解析intent，清除其他activity，如果不是通过切换账号前来则跳过
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
@@ -53,16 +63,16 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
         }
         //将任务栏加入布局
         setContentView(R.layout.activity_welcome);
-        preferences = getSharedPreferences("guideActivity", MODE_PRIVATE);
+        preferences = getSharedPreferences("welcomeActivity", MODE_PRIVATE);
         //初始化
         //判断是否首次进入
-        if (preferences.getBoolean("firstStart", true)) {
+        if (preferences.getBoolean("welcome_firstStart", true)) {
             editor = preferences.edit();
             //设置为false，不再显示引导页
-            editor.putBoolean("firstStart", false);
+            editor.putBoolean("welcome_firstStart", false);
             editor.apply();
-            Intent intent = new Intent(this, GuideActivity.class);
-            startActivity(intent);
+            Intent toGuide = new Intent(this, GuideActivity.class);
+            startActivity(toGuide);
             this.finish();
         } else {
             //不是首次登录
@@ -72,7 +82,9 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
             account = (EditText) findViewById(R.id.account);
             password = (EditText) findViewById(R.id.password);
             Button enterNewWorld = (Button) findViewById(R.id.enter_new_world);
+            Button registerAgain = (Button) findViewById(R.id.register_again);
             enterNewWorld.setOnClickListener(this);
+            registerAgain.setOnClickListener(this);
             //进入界面按钮
         }
     }
@@ -125,13 +137,17 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
                         dialog.show();
                         break;
                     }
-                    Intent intent = new Intent(this, AttentionAttacherActivity.class);
-                    intent.putExtra("user_id", id);
-                    startActivity(intent);
+                    Intent enter = new Intent(this, AttentionAttacherActivity.class);
+                    enter.putExtra("user_id", id);
+                    startActivity(enter);
                     this.finish();
                     //进入界面不需要出现两次，直接finish
                     break;
                 }
+            case R.id.register_again:
+                Intent regist = new Intent(this, GuideActivity.class);
+                startActivity(regist);
+                break;
             default:
                 break;
         }

@@ -10,15 +10,30 @@
         android:layout="@layout/preference_category_widget"
         android:title="基本设置">
         <CheckBoxPreference
-            android:key="@string/save_net_mode"
+            android:key="@string/save_background_mode"
             android:layout="@layout/preference_item"
-            android:summary="仅在Wi-Fi环境下才自动加载图片"
-            android:title="省流量模式"
+            android:summary="默认采用每日一图"
+            android:title="根据天气切换背景"
+            android:widgetLayout="@layout/switch_layout"/>
+        <CheckBoxPreference
+            android:key="@string/save_night_mode"
+            android:layout="@layout/preference_item"
+            android:summary="Beta，可能会不稳定"
+            android:title="夜间模式"
             android:widgetLayout="@layout/switch_layout"/>
         <Preference
             android:layout="@layout/preference_item"
             android:summary="删除已缓存的文章内容及图片"
             android:title="清空缓存" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/preference_category_widget"
+        android:title="账号设置">
+        <Preference
+            android:key="@string/change_account"
+            android:layout="@layout/preference_item"
+            android:title="切换账号" />
     </PreferenceCategory>
 
     <PreferenceCategory

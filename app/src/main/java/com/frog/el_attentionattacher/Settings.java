@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import butterknife.BindView;
+import utils.ActivityCollector;
 import utils.PrefUtils;
 import utils.ToastUtil;
 
@@ -20,6 +21,7 @@ public class Settings extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCollector.addActivity(this);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
         initToolbar();
@@ -54,5 +56,11 @@ public class Settings extends AppCompatActivity {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
     }
 }

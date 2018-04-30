@@ -7,54 +7,51 @@ import com.frog.el_attentionattacher.app.BasicApp;
 
 /**
  * SharedPreferences工具类
- * 保存 夜间模式
  * Created by tomchen on 2/3/16.
+ * Modified by Wen Sun
  */
 public class PrefUtils {
 
     //日间或者夜间模式
-    private static final String PRE_THEME_MODE = "dark_mode";
+    private static final String PRE_THEME_MODE = "night_mode";
 
-    //省流量模式 这儿和R.string.save_net_mode相同
-    private static final String PRE_SAVE_NET_MODE = "save_net_mode";
+    //背景图模式 和R.string.save_net_mode相同
+    private static final String PRE_SAVE_BACKGROUND_MODE = "save_background_mode";
 
-    private static final String PRE_NAME = "com.studychen.seenews";
+    private static final String PRE_NAME = "com.frog.el_attentionattacher";
 
     private static SharedPreferences getSharedPreferences() {
         return BasicApp.getContext()
                 .getSharedPreferences(PRE_NAME, Context.MODE_PRIVATE);
     }
 
-    public static boolean isDarkMode() {
+    public static boolean isNightMode() {
         return getSharedPreferences().getBoolean(PRE_THEME_MODE, false);
     }
 
     /**
      * 夜间模式
-     *
-     * @param isDarkMode true为夜间模式
+     * true为夜间模式
      */
-    public static void setDarkMode(boolean isDarkMode) {
+    public static void setNightMode(boolean isDarkMode) {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.putBoolean(PRE_THEME_MODE, isDarkMode);
         editor.commit();
     }
 
     /**
-     * 省流量模式
-     *
-     * @return
+     * 根据天气切换背景
      */
-    public static boolean isSaveNetMode() {
-        return getSharedPreferences().getBoolean(PRE_SAVE_NET_MODE, false);
+    public static boolean isSaveBackgroundMode() {
+        return getSharedPreferences().getBoolean(PRE_SAVE_BACKGROUND_MODE, false);
     }
 
     /**
-     * @param isSaveNetMode true为省流量模式，不加载图片
+     * true为根据天气切换
      */
-    public static void setSaveNetMode(boolean isSaveNetMode) {
+    public static void setPreSaveBackgroundMode(boolean isSaveBackgroundMode) {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.putBoolean(PRE_SAVE_NET_MODE, isSaveNetMode);
+        editor.putBoolean(PRE_SAVE_BACKGROUND_MODE, isSaveBackgroundMode);
         editor.commit();
     }
 

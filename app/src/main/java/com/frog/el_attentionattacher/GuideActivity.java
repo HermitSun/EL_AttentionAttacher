@@ -23,9 +23,11 @@ import com.bumptech.glide.Glide;
 import com.frog.el_attentionattacher.db.PersonalInfoData;
 
 import org.litepal.LitePal;
+import org.litepal.crud.DataSupport;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import utils.ActivityCollector;
 
@@ -36,6 +38,8 @@ import utils.ActivityCollector;
 
 public class GuideActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private SharedPreferences preferences;
+    private Editor editor;
     private ImageView guideBackground;
     private EditText account;
     private EditText password;
@@ -45,6 +49,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
+        ActivityCollector.finishOthers(this);
         //初始化
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
@@ -53,6 +58,7 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.activity_guide);
+        preferences = getSharedPreferences("guideActivity", MODE_PRIVATE);
         //将任务栏加入布局
         guideBackground = (ImageView) findViewById(R.id.guide_background);
         Glide.with(this).load(R.drawable.guide_background).into(guideBackground);
@@ -70,39 +76,83 @@ public class GuideActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.register:
-                String accountIn = account.getText().toString();
-                String passwordIn = password.getText().toString();
-                String usernameIn = username.getText().toString();
-                if (TextUtils.isEmpty(accountIn) || TextUtils.isEmpty(passwordIn)) {
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(GuideActivity.this);
-                    dialog.setTitle("创建失败");
-                    dialog.setMessage("账号密码不能为空！");
-                    dialog.setCancelable(false);
-                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            account.setText("");
-                            password.setText("");
-                            username.setText("");
-                        }
-                    });
-                    dialog.show();
-                    break;
+                //判断是否首次进入
+                if (preferences.getBoolean("welcome_firstStart", true)) {
+                    editor = preferences.edit();
+                    //设置为false，不再显示引导页
+                    editor.putBoolean("welcome_firstStart", false);
+                    editor.apply();
+                    String accountIn = account.getText().toString();
+                    String passwordIn = password.getText().toString();
+                    String usernameIn = username.getText().toString();
+                    if (TextUtils.isEmpty(accountIn) || TextUtils.isEmpty(passwordIn)) {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(GuideActivity.this);
+                        dialog.setTitle("创建失败");
+                        dialog.setMessage("账号密码不能为空！");
+                        dialog.setCancelable(false);
+                        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                account.setText("");
+                                password.setText("");
+                                username.setText("");
+                            }
+                        });
+                        dialog.show();
+                        break;
+                    } else {
+                        LitePal.getDatabase();
+                        PersonalInfoData data = new PersonalInfoData();
+                        data.setId(1);
+                        data.setAccount(accountIn);
+                        data.setPassword(passwordIn);
+                        data.setUsername(usernameIn);
+                        data.save();
+                        //个人信息写入数据库
+                        Intent intent = new Intent(this, AttentionAttacherActivity.class);
+                        intent.putExtra("user_id", 1);
+                        startActivity(intent);
+                        this.finish();
+                        //进入界面不需要出现两次，直接finish
+                        break;
+                    }
                 } else {
-                    LitePal.getDatabase();
-                    PersonalInfoData data = new PersonalInfoData();
-                    data.setId(1);
-                    data.setAccount(accountIn);
-                    data.setPassword(passwordIn);
-                    data.setUsername(usernameIn);
-                    data.save();
-                    //个人信息写入数据库
-                    Intent intent = new Intent(this, AttentionAttacherActivity.class);
-                    intent.putExtra("user_id", 1);
-                    startActivity(intent);
-                    this.finish();
-                    //进入界面不需要出现两次，直接finish
-                    break;
+                    String accountIn = account.getText().toString();
+                    String passwordIn = password.getText().toString();
+                    String usernameIn = username.getText().toString();
+                    if (TextUtils.isEmpty(accountIn) || TextUtils.isEmpty(passwordIn)) {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(GuideActivity.this);
+                        dialog.setTitle("创建失败");
+                        dialog.setMessage("账号密码不能为空！");
+                        dialog.setCancelable(false);
+                        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                account.setText("");
+                                password.setText("");
+                                username.setText("");
+                            }
+                        });
+                        dialog.show();
+                        break;
+                    } else {
+                        LitePal.getDatabase();
+                        PersonalInfoData data = new PersonalInfoData();
+                        List<PersonalInfoData> datas = DataSupport.findAll(PersonalInfoData.class);
+                        int idNow = datas.size() + 1;
+                        data.setId(idNow);
+                        data.setAccount(accountIn);
+                        data.setPassword(passwordIn);
+                        data.setUsername(usernameIn);
+                        data.save();
+                        //个人信息写入数据库
+                        Intent intent = new Intent(this, AttentionAttacherActivity.class);
+                        intent.putExtra("user_id", idNow);
+                        startActivity(intent);
+                        this.finish();
+                        //进入界面不需要出现两次，直接finish
+                        break;
+                    }
                 }
             default:
                 break;

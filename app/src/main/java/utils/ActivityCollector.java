@@ -24,4 +24,16 @@ public class ActivityCollector {
         }
         activities.clear();
     }
+
+    public static void finishOthers(Activity thisActivity) {
+        for (Activity activity : activities) {
+            if(activity!=thisActivity){
+                if (!activity.isFinishing()) {
+                    activity.finish();
+                }
+            }
+        }
+        activities.clear();
+        activities.add(thisActivity);
+    }
 }

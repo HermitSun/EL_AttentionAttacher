@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">EL_AttentionAttacher</string>
-    <string name="save_net_mode">save_net_mode</string>
+    <string name="save_background_mode">save_background_mode</string>
+    <string name="save_night_mode">save_night_mode</string>
+    <string name="change_account">change_account</string>
     <string name="title_activity_setting">设置</string>
 </resources>
