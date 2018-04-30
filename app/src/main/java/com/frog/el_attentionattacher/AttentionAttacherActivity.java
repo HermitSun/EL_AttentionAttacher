@@ -1,27 +1,38 @@
 package com.frog.el_attentionattacher;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,7 +51,6 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
     private DrawerLayout mDrawerLayout;
     private ImageView bingPicImg;
     public SwipeRefreshLayout swipeRefreshLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,8 +133,37 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.start_attach_attention:
-                ToastUtil.showToast(AttentionAttacherActivity.this,
-                        "Started.", Toast.LENGTH_SHORT);
+                Calendar currentTime = Calendar.getInstance();
+                // 创建一个时间选择器
+                new TimePickerDialog(AttentionAttacherActivity.this, 0, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        // 创建一个PendingIntent
+                        Intent intent = new Intent("com.frog.el_attentionattacher.broadcast.Alarm");
+                        PendingIntent sender = PendingIntent.getBroadcast(AttentionAttacherActivity.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        long systemTime = System.currentTimeMillis();
+                        // 设置当前时间
+                        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                        Calendar c = Calendar.getInstance();
+                        // 先设置为默认时间
+                        c.setTimeInMillis(System.currentTimeMillis());
+                        c.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                        // 根据用户选择的时间来设置Calendar对象
+                        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        c.set(Calendar.MINUTE, minute);
+                        c.set(Calendar.SECOND, 0);
+                        c.set(Calendar.MILLISECOND, 0);
+                        long selectTime = c.getTimeInMillis();
+                        if (systemTime > selectTime){
+                            c.add(Calendar.DAY_OF_MONTH, 1);
+                            selectTime = c.getTimeInMillis();
+                            ToastUtil.showToast(AttentionAttacherActivity.this, "你也想拥有永恒的青春？");
+                        }
+                        // 设置AlarmManager在Calendar对应的时间启动Activity
+                        am.setExact(AlarmManager.RTC_WAKEUP, selectTime, sender);
+                        Toast.makeText(AttentionAttacherActivity.this, "闹钟设置成功", Toast.LENGTH_SHORT).show();
+                    }
+                }, currentTime.get(Calendar.HOUR_OF_DAY), currentTime.get(Calendar.MINUTE), false).show();
                 break;
             default:
                 break;

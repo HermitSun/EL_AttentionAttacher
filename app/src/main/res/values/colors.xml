@@ -2,5 +2,13 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <!--日本传统色 苔色-->
+    <color name="colorAccent">#838a2d</color>
+    <!--以下是Alarm界面的颜色-->
+    <color name="title_transparent_black">#22000000</color>
+    <color name="light_black">#141414</color>
+    <color name="line_and_outline_grey">#d9d9d9</color>
+    <color name="white">#ffffff</color>
+    <color name="transparent_background">#30000000</color>
+    <!--透明底色-->
 </resources>
