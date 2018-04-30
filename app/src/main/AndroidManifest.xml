@@ -31,14 +31,6 @@
         <activity android:name=".PersonalInfo" />
         <activity android:name=".Welcome" />
         <!--用来接收闹钟广播的receiver-->
-        <receiver
-            android:name=".receiver.ClockReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.frog.el_attentionattacher.broadcast.Alarm" />
-            </intent-filter>
-        </receiver>
 
         <activity
             android:name=".AlarmActivity"

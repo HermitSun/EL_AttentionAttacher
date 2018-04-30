@@ -139,8 +139,8 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         // 创建一个PendingIntent
-                        Intent intent = new Intent("com.frog.el_attentionattacher.broadcast.Alarm");
-                        PendingIntent sender = PendingIntent.getBroadcast(AttentionAttacherActivity.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        Intent intent = new Intent(AttentionAttacherActivity.this, AlarmActivity.class);
+                        PendingIntent sender = PendingIntent.getActivity(AttentionAttacherActivity.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
                         long systemTime = System.currentTimeMillis();
                         // 设置当前时间
                         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -160,8 +160,10 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
                             ToastUtil.showToast(AttentionAttacherActivity.this, "你也想拥有永恒的青春？");
                         }
                         // 设置AlarmManager在Calendar对应的时间启动Activity
-                        am.setExact(AlarmManager.RTC_WAKEUP, selectTime, sender);
-                        Toast.makeText(AttentionAttacherActivity.this, "闹钟设置成功", Toast.LENGTH_SHORT).show();
+                        else {
+                            am.setExact(AlarmManager.RTC_WAKEUP, selectTime, sender);
+                            ToastUtil.showToast(AttentionAttacherActivity.this, "闹钟设置成功");
+                        }
                     }
                 }, currentTime.get(Calendar.HOUR_OF_DAY), currentTime.get(Calendar.MINUTE), false).show();
                 break;
