@@ -332,8 +332,13 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (weatherInfo != null) {
-                    Glide.with(AttentionAttacherActivity.this).load(R.drawable.guide_background).into(bingPicImg);
+                if (weatherInfo.equals("多云")) {
+                    Log.d("ELA", weatherInfo);
+                    Glide.with(AttentionAttacherActivity.this).load(R.drawable.cloudy).into(bingPicImg);
+                } else if (weatherInfo.equals("阵雨")) {
+                    Glide.with(AttentionAttacherActivity.this).load(R.drawable.rainy).into(bingPicImg);
+                } else {
+                    Glide.with(AttentionAttacherActivity.this).load(R.drawable.sunny).into(bingPicImg);
                 }
                 swipeRefreshLayout.setRefreshing(false);
             }
