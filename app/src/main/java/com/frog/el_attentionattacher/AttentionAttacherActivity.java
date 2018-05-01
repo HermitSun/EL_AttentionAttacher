@@ -19,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -69,10 +70,8 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCollector.addActivity(this);
-        prefs= PreferenceManager.getDefaultSharedPreferences(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
         editor = PreferenceManager.getDefaultSharedPreferences(AttentionAttacherActivity.this).edit();
-        editor.putBoolean("change_background",false);
-        editor.apply();
         //缓存数据
         //初始化
 
@@ -85,7 +84,7 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         setContentView(R.layout.activity_attention_attacher);
         //将任务栏加入布局
 
-        mainBody=(ScrollView)findViewById(R.id.main_body_layout);
+        mainBody = (ScrollView) findViewById(R.id.main_body_layout);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         //下拉刷新
@@ -95,9 +94,13 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         //开始专注按钮
 
         bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
-        if(PrefUtils.isSaveBackgroundMode()&&prefs.getBoolean("change_background",true)){
+        Intent update = new Intent(this, AutoUpdateService.class);
+        startService(update);
+        //启动后台更新服务
+
+        if (PrefUtils.isSaveBackgroundMode()) {
             changeBackgroundByWeather();
-        }else{
+        } else {
             String bingPic = prefs.getString("bing_pic", null);
             if (bingPic != null) {
                 Glide.with(AttentionAttacherActivity.this).load(bingPic).into(bingPicImg);
@@ -109,20 +112,13 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(PrefUtils.isSaveBackgroundMode()){
-                    Log.d("ELA","123");
-                    if(prefs.getBoolean("change_background",false)){
-                        editor.putBoolean("change_background",true);
-                        editor.apply();
-                    }
+                if (PrefUtils.isSaveBackgroundMode()) {
                     changeBackgroundByWeather();
-                }else{
+                } else {
                     loadBingPic();
                 }
             }
         });
-        Intent loadPicIntent = new Intent(this, AutoUpdateService.class);
-        startService(loadPicIntent);
         //加载必应每日一图（可替换为本地服务器数据）
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -169,9 +165,8 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
                         break;
                     case R.id.nav_settings:
                         mDrawerLayout.closeDrawers();
-                        Intent intent1 = new Intent(AttentionAttacherActivity.this, Settings.class);
-                        startActivityForResult(intent1, 11);
-                        Log.d("ELA","settings");
+                        Intent settings = new Intent(AttentionAttacherActivity.this, Settings.class);
+                        startActivityForResult(settings, 11);
                         break;
                     case R.id.nav_delete:
                         AlertDialog.Builder dialog = new AlertDialog.Builder(AttentionAttacherActivity.this);
@@ -256,9 +251,8 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case 11:
-                if(resultCode==RESULT_OK){
-                    mWeatherId=data.getStringExtra("weather_id");
-                    Log.d("ELA","**:"+mWeatherId);
+                if (resultCode == RESULT_OK) {
+                    mWeatherId = data.getStringExtra("weather_id");
                 }
                 break;
             default:
@@ -266,22 +260,18 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
         }
     }
 
-    private void changeBackgroundByWeather(){
-        Log.d("ELA","456");
-        String weatherString=prefs.getString("weather",null);
-        if(weatherString!=null){
-            Log.d("ELA","789");
-            Weather weather= AnalyzeWeatherUtil.handleWeatherResponse(weatherString);
+    private void changeBackgroundByWeather() {
+        String weatherString = prefs.getString("weather", null);
+        if (weatherString != null) {
+            Weather weather = AnalyzeWeatherUtil.handleWeatherResponse(weatherString);
+            mWeatherId = weather.basic.weatherId;
             showWeatherInfo(weather);
-        }else{
-            //mWeatherId = getIntent().getStringExtra("weather_id");
-            //解析intent得到天气信息
-            Log.d("ELA","enter");
+        } else {
             mainBody.setVisibility(View.INVISIBLE);
-            Log.d("ELA","*:"+mWeatherId);
             requestWeather(mWeatherId);
         }
     }
+
     /**
      * 根据天气id请求城市天气信息
      */
@@ -324,27 +314,31 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
             }
         });
     }
+
     /**
      * 处理并展示Weather中的数据
      */
-    private void showWeatherInfo(Weather weather) {
-        String cityName = weather.basic.cityName;
-        String updateTime = weather.basic.update.updateTime.split(" ")[1];
-        String degree = weather.now.temperature + "℃";
-        String weatherInfo = weather.now.more.info;
+    String cityName;
+    String updateTime;
+    String degree;
+    String weatherInfo;
+
+    private void showWeatherInfo(final Weather weather) {
+        cityName = weather.basic.cityName;
+        updateTime = weather.basic.update.updateTime.split(" ")[1];
+        degree = weather.now.temperature + "℃";
+        weatherInfo = weather.now.more.info;
         mainBody.setVisibility(View.VISIBLE);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if("test"!=null){
+                if (weatherInfo != null) {
                     Glide.with(AttentionAttacherActivity.this).load(R.drawable.guide_background).into(bingPicImg);
                 }
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
 
-        Intent intent = new Intent(this, AutoUpdateService.class);
-        startService(intent);
     }
     //根据天气切换背景的具体实现
 

@@ -34,7 +34,6 @@ public class SettingsFragment extends PreferenceFragment {
                     ToastUtil.showToast(getActivity(), "已切换。设置完成后请刷新主界面。", Toast.LENGTH_SHORT);
                     Intent setLocation = new Intent(getActivity(), ChooseWeatherActivity.class);
                     startActivityForResult(setLocation, 21);
-                    Log.d("ELA","mode settings");
                 }
                 //启动时确认
                 return true;
@@ -85,7 +84,6 @@ public class SettingsFragment extends PreferenceFragment {
                     Intent back=new Intent();
                     back.putExtra("weather_id",weather_id);
                     getActivity().setResult(RESULT_OK,back);
-                    Log.d("ELA","mode settings:"+weather_id);
                     getActivity().finish();
                 }
                 break;

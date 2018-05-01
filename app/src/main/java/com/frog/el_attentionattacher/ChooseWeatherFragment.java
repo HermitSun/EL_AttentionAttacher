@@ -113,7 +113,6 @@ public class ChooseWeatherFragment extends Fragment {
                     Intent show = new Intent();
                     show.putExtra("weather_id", weatherId);
                     getActivity().setResult(Activity.RESULT_OK,show);
-                    Log.d("ELA","weather settings:"+weatherId);
                     getActivity().finish();
                 }
             }
