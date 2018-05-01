@@ -113,7 +113,7 @@ public class AttentionAttacherActivity extends AppCompatActivity implements View
             @Override
             public void onRefresh() {
                 if (PrefUtils.isSaveBackgroundMode()) {
-                    changeBackgroundByWeather();
+                    requestWeather(mWeatherId);
                 } else {
                     loadBingPic();
                 }
